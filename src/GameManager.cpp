@@ -24,11 +24,28 @@ using namespace std;
  * GameManager implementation
  */
 
-GameManager::GameManager(string jsonPath)
+GameManager::GameManager(string jsonPath) : saveManager(jsonPath), jsonPath(jsonPath)
 {
-    this->jsonPath = jsonPath;
-    // this->saveManager = SaveManager();
-    this->displayManager = DisplayManager();
+}
+string combinePlayerNames(Player **players, int numPlayers)
+{
+    stringstream ss("");
+    for (int i = 0; i < numPlayers; i++)
+    {
+        if (i != 0)
+        {
+            if (i == numPlayers - 1)
+            {
+                ss << " and ";
+            }
+            else
+            {
+                ss << ", ";
+            }
+        }
+        ss << players[i]->name;
+    }
+    return ss.str();
 }
 
 /**
@@ -40,35 +57,21 @@ void GameManager::play()
     cout << "Welcome to BIG FUN, the Beguiling Interactive Game For Unraveling Connect-N!" << endl;
     cout << "****************************************************************************" << endl;
     cout << endl;
-    Game game = GameSetup::interactiveSetup();
-
-    stringstream ss("");
-    for (int i = 0; i < game.numPlayers; i++)
-    {
-        if (i != 0)
-        {
-            if (i == game.numPlayers - 1)
-            {
-                ss << " and ";
-            }
-            else
-            {
-                ss << ", ";
-            }
-        }
-        ss << game.players[i]->name;
-    }
+    saveManager.loadData();
+    Game game = GameSetup::interactiveSetup(saveManager.data);
+    saveManager.printStats(game.players, game.numPlayers);
+    auto playerString = combinePlayerNames(game.players, game.numPlayers);
 
     bool playAgain = false;
     do
     {
         cout << endl;
         cout << "****************************************************************************" << endl;
-        cout << "Playing a new game with " << ss.str() << ". Connect-N: " << game.board.connectN << " Width: " << game.board.width << " Height: " << game.board.height << endl
-             << endl;
+        cout << "Playing a new game with " << playerString << ". Connect-N: " << game.board.connectN << " Width: " << game.board.width << " Height: " << game.board.height << endl;
         cout << "****************************************************************************" << endl;
 
         doGame(&game);
+        saveManager.updateStatsWithGame(game);
         printOutcome(game);
         playAgain = InteractiveHelpers::validBoolInput("Would you like to play again?");
         if (playAgain)
@@ -76,9 +79,10 @@ void GameManager::play()
             game.reset();
         }
     } while (playAgain);
-
+    saveManager.saveData();
+    saveManager.printStats(game.players, game.numPlayers);
     cout << endl;
-    cout << "You played a game! Wasn't it awesome?" << endl;
+    cout << "Thanks for playing!" << endl;
 }
 
 /**
@@ -88,13 +92,13 @@ void GameManager::play()
 void GameManager::doGame(Game *game)
 {
     displayManager.begin(game->board);
-    bool gameWon = false;
+    TurnResult turnResult = TurnResult::nextTurn;
     int playerIndex = 0;
-    while (!gameWon)
+    while (turnResult == TurnResult::nextTurn)
     {
         Player *player = game->players[playerIndex];
-        gameWon = doTurn(game->board, player);
-        if (gameWon)
+        turnResult = doTurn(game->board, player);
+        if (turnResult == TurnResult::gameWon)
         {
             game->winner = player;
         }
@@ -108,15 +112,18 @@ void GameManager::doGame(Game *game)
  * @param player
  * @return bool
  */
-bool GameManager::doTurn(Board board, Player *player)
+GameManager::TurnResult GameManager::doTurn(Board board, Player *player)
 {
-    cout << "Doing a turn..." << endl;
     int dropColumn = displayManager.getDrop(board, player);
+    if (dropColumn == -1)
+    {
+        return TurnResult::gameQuit;
+    }
     if (!board.dropBelow(dropColumn, player))
     {
         cout << "This error should not occur: the player's piece could not be dropped in the specified column" << endl;
     }
-    return board.checkWin(player);
+    return board.checkWin(player) ? TurnResult::gameWon : TurnResult::nextTurn;
 }
 
 /**
@@ -125,5 +132,12 @@ bool GameManager::doTurn(Board board, Player *player)
  */
 void GameManager::printOutcome(Game game)
 {
-    cout << game.winner->name << " Wins!!" << endl;
+    if (game.winner == NULL)
+    {
+        cout << "This game ended with no winner!" << endl;
+    }
+    else
+    {
+        cout << game.winner->name << " Wins!!" << endl;
+    }
 }

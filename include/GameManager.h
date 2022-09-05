@@ -41,7 +41,13 @@ private:
      * @param board
      * @param player
      */
-    bool doTurn(Board board, Player *player);
+    enum TurnResult
+    {
+        nextTurn = 0,
+        gameWon = 1,
+        gameQuit = 2
+    };
+    TurnResult doTurn(Board board, Player *player);
 
     /**
      * @param game

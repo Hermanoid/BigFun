@@ -10,6 +10,7 @@
  */
 
 #include "Player.h"
+#include <vector>
 
 #ifndef _SAVEDATA_H
 #define _SAVEDATA_H
@@ -18,7 +19,7 @@ class SaveData
 {
 public:
     int allTimeGamesPlayed;
-    Player *players;
+    std::vector<Player> players;
 };
 
 #endif //_SAVEDATA_H

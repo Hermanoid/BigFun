@@ -14,7 +14,7 @@
 #include "ColoredSymbol.h"
 #include "NormalSymbol.h"
 
-Player **GameSetup::interactivePlayersSetup(int numPlayers)
+Player **GameSetup::interactivePlayersSetup(vector<Player> savedPlayers, int numPlayers)
 {
     Player **players = new Player *[numPlayers];
     for (int i = 0; i < numPlayers; i++)
@@ -95,7 +95,7 @@ Game GameSetup::quickGameSetup()
 /**
  * @return Game
  */
-Game GameSetup::interactiveSetup()
+Game GameSetup::interactiveSetup(SaveData data)
 {
     cout << "To start, please enter a few details to set up a game, or choose Quick Play." << endl;
     int numPlayers = 0;
@@ -119,7 +119,7 @@ Game GameSetup::interactiveSetup()
         }
     }
 
-    Player **players = interactivePlayersSetup(numPlayers);
+    Player **players = interactivePlayersSetup(data.players, numPlayers);
     // cin.get(); // Throw away a spurious newline. It's pretty odd.
     Board board = interactiveBoardSetup();
     // cin.get(); // Throw away another spurious newline. It remains pretty odd.

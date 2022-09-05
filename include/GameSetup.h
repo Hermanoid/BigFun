@@ -16,16 +16,17 @@
 #include "Board.h"
 #include "Player.h"
 #include "Game.h"
+#include "SaveData.h"
 
 using namespace std;
 
 class GameSetup
 {
 public:
-    static Player **interactivePlayersSetup(int numPlayers);
+    static Player **interactivePlayersSetup(vector<Player> savedPlayers, int numPlayers);
     static Board interactiveBoardSetup();
     static Game quickGameSetup();
-    static Game interactiveSetup();
+    static Game interactiveSetup(SaveData data);
 };
 
 #endif // _GAMESETUP_H

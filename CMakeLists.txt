@@ -4,8 +4,8 @@ cmake_minimum_required(VERSION 3.10)
 project(BigFun)
 
 set(CURSES_USE_NCURSES TRUE)
-set(CURSES_LIBRARY "C:/mingw64/mingw64/opt/lib/libncursesw.a")
-set(CURSES_INCLUDE_PATH "C:/mingw64/mingw64/opt/include")
+set(CURSES_LIBRARY ${PROJECT_SOURCE_DIR}/libraries/libncursesw.a)
+set(CURSES_INCLUDE_PATH "include")
 
 include_directories("include")
 include_directories(${CURSES_INCLUDE_PATH})

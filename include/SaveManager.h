@@ -24,15 +24,15 @@ public:
     SaveData data;
     string jsonPath;
 
+    SaveManager(string jsonPath);
+
     void loadData();
 
     /**
      * @param players
      * @param numPlayers
      */
-    void printStats(Player *players, int numPlayers);
-
-    void saveStats();
+    void printStats(Player **players, int numPlayers);
 
     /**
      * @param game
@@ -40,6 +40,7 @@ public:
     void updateStatsWithGame(Game game);
 
     void saveData();
+    Player *findSavedPlayerByName(string name);
 };
 
 #endif //_SAVEMANAGER_H

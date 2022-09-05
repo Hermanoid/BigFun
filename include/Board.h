@@ -34,10 +34,15 @@ public:
      */
     bool dropBelow(int column, Player *player);
 
+    void reset();
     /**
      * @param player
      */
     bool checkWin(Player *player);
+
+private:
+    bool checkWinWithDirection(Player *player, int deltaY, int deltaX);
+    bool checkWinAtLocation(Player *player, int deltaY, int deltaX, int row, int col);
 };
 
 #endif //_BOARD_H

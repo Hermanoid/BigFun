@@ -6,7 +6,7 @@ using namespace std;
 
 int main()
 {
-    GameManager gm("gamesave.json");
+    GameManager gm("../gamesave.json");
     gm.play();
     return 0;
 }

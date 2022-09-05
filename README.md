@@ -10,8 +10,15 @@ The game goes something like this: At the start of the game, the players are giv
 ---
 
 Build Instructions (windows):
-1. Have MinGW installed (can run `g++ --version`)
+1. Have MinGW installed (can run `mingw32-make --version`)
 2. Have CMake installed
-3. `mkdir build; cd build`
-4. `cmake -G "MinGW Makefiles" ../`
-5. `mingw32-make.exe`
+3. Starting in this (project root directory), perform the following commands
+4. `mkdir build; cd build`
+5. `cmake -G "MinGW Makefiles" ../`
+6. `mingw32-make.exe`
+
+---
+Known limitations:
+1. The Ncurses library doesn't play nice with the windows color system. Additionally, more recent (and potentially color-compatible) versions of Ncurses fail to build on windows. Thus, the color features of this game only work on WSL or an actual linux machine. Because this project will only be used (and graded) on windows machines, color functionality has been disabled to prevent eratic behavior.
+2. The ncurses library used also does not handle window resizing well; it's necessary to re-start the script to get window size information to update.
+3. Ncurses plays especially poorly with Powershell. Use the usual windows command prompt.

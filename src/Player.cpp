@@ -14,6 +14,12 @@
 /**
  * Player implementation
  */
-
-Player::Player(unique_ptr<Symbol> symbol, string name) : symbol(move(symbol)), name(name) {}
-Player::Player(unique_ptr<Symbol> symbol, string name, int wins, int losses) : symbol(move(symbol)), name(name), wins(wins), losses(losses) {}
+Player::Player(const Player &old)
+{
+    symbol = old.symbol;
+    name = old.name;
+    wins = old.wins;
+    losses = old.losses;
+}
+Player::Player(shared_ptr<Symbol> symbol, string name) : symbol(move(symbol)), name(name) {}
+Player::Player(shared_ptr<Symbol> symbol, string name, int wins, int losses) : symbol(move(symbol)), name(name), wins(wins), losses(losses) {}

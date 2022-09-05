@@ -21,9 +21,10 @@ using namespace std;
 class Player
 {
 public:
-    Player(unique_ptr<Symbol> symbol, string name);
-    Player(unique_ptr<Symbol> symbol, string name, int wins, int losses);
-    unique_ptr<Symbol> symbol;
+    Player(const Player &old);
+    Player(shared_ptr<Symbol> symbol, string name);
+    Player(shared_ptr<Symbol> symbol, string name, int wins, int losses);
+    shared_ptr<Symbol> symbol;
     string name;
     int wins;
     int losses;

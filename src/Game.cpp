@@ -15,7 +15,7 @@
  * Game implementation
  */
 
-Game::Game(Board board, Player **players, int numPlayers, bool quickPlay) : board(board), players(players), numPlayers(numPlayers){};
+Game::Game(Board board, Player **players, int numPlayers, bool quickPlay) : board(board), players(players), numPlayers(numPlayers), winner(NULL){};
 Game::Game(Board board, Player **players, int numPlayers) : Game(board, players, numPlayers, false){};
 
 /**
@@ -23,6 +23,7 @@ Game::Game(Board board, Player **players, int numPlayers) : Game(board, players,
  */
 void Game::reset()
 {
-    this->winner = nullptr;
+    this->winner = NULL;
+    this->board.reset();
     return;
 }
