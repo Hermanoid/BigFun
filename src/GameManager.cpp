@@ -58,7 +58,7 @@ void GameManager::play()
     cout << "****************************************************************************" << endl;
     cout << endl;
     saveManager.loadData();
-    Game game = GameSetup::interactiveSetup(saveManager.data);
+    Game game = GameSetup::interactiveSetup(saveManager);
     saveManager.printStats(game.players, game.numPlayers);
     auto playerString = combinePlayerNames(game.players, game.numPlayers);
 
@@ -80,7 +80,11 @@ void GameManager::play()
         }
     } while (playAgain);
     saveManager.saveData();
-    saveManager.printStats(game.players, game.numPlayers);
+    cout << endl;
+    if (!game.quickPlay)
+    {
+        saveManager.printStats(game.players, game.numPlayers);
+    }
     cout << endl;
     cout << "Thanks for playing!" << endl;
 }

@@ -14,3 +14,5 @@
 /**
  * SaveData implementation
  */
+
+SaveData::SaveData() : allTimeGamesPlayed(0){};

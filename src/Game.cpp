@@ -15,7 +15,7 @@
  * Game implementation
  */
 
-Game::Game(Board board, Player **players, int numPlayers, bool quickPlay) : board(board), players(players), numPlayers(numPlayers), winner(NULL){};
+Game::Game(Board board, Player **players, int numPlayers, bool quickPlay) : board(board), players(players), numPlayers(numPlayers), quickPlay(quickPlay), winner(NULL){};
 Game::Game(Board board, Player **players, int numPlayers) : Game(board, players, numPlayers, false){};
 
 /**

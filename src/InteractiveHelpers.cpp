@@ -32,7 +32,7 @@ int InteractiveHelpers::validIntInputWithDefault(string prompt, int default_, st
     while (true)
     {
         cout << prompt << " (leave blank for the default, " << default_ << "): ";
-        cin >> entered_value;
+        getline(cin, entered_value);
         if (entered_value == "")
         {
             return default_;

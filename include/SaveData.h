@@ -18,8 +18,9 @@
 class SaveData
 {
 public:
+    SaveData();
     int allTimeGamesPlayed;
-    std::vector<Player> players;
+    std::vector<Player *> players;
 };
 
 #endif //_SAVEDATA_H

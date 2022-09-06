@@ -14,39 +14,61 @@
 #include "ColoredSymbol.h"
 #include "NormalSymbol.h"
 
-Player **GameSetup::interactivePlayersSetup(vector<Player> savedPlayers, int numPlayers)
+Player *trySearchPlayer(SaveManager saveManager, string prompt, string &name)
+{
+}
+
+Player **GameSetup::interactivePlayersSetup(SaveManager saveManager, int numPlayers)
 {
     Player **players = new Player *[numPlayers];
     for (int i = 0; i < numPlayers; i++)
     {
         string name;
-        cout << "Please enter the name for player #" << i << ": ";
-        cin >> name;
+        Player *foundPlayer = NULL;
+        while (foundPlayer == NULL)
+        {
+            cout << "Please enter the name for player #" << i << ": ";
+            cin >> name;
+            foundPlayer = saveManager.findSavedPlayerByName(name);
+            if (foundPlayer == NULL)
+            {
+                cout << "That player doesn't exist yet!" << endl;
+                bool createNew = InteractiveHelpers::validBoolInput("Would you like to create a new player (Y) or search for existing players again (N)?");
+                if (createNew)
+                {
+                    break;
+                }
+            }
+        }
+        if (foundPlayer != NULL)
+        {
+            Player *copy = new Player(foundPlayer);
+            players[i] = copy;
+            continue;
+        }
 
-        cout << "TODO: Implement saved player searching" << endl;
-
-        unique_ptr<Symbol> symbol;
+        Symbol *symbol;
         string symbolColored, symbolCharacter;
         cout << "Hello, " << name << "!" << endl
-             << "What character would you like your piece to be while playing? ('O' is a good choice): ";
+             << "What character would you like your piece to be while playing? ('O' and 'X' are good choices): ";
         cin >> symbolCharacter;
 
         if (InteractiveHelpers::validBoolInput("Should this piece be colorized? (Enter Y or N):"))
         {
-            cout << "That's super cool!  Lucky you, you get whatever this color is going to be, because the selector has not been implemented yet." << endl;
-            symbol = make_unique<ColoredSymbol>(symbolCharacter[0], rand() % 16);
+            cout << "That's super cool!  Unfortunately, your terminal doesn't support color. For now, you will be assigned a random color." << endl;
+            symbol = new ColoredSymbol(symbolCharacter[0], rand() % 64);
         }
         else
         {
-            symbol = make_unique<NormalSymbol>(symbolCharacter[0]);
+            symbol = new NormalSymbol(symbolCharacter[0]);
         }
 
         cout << endl;
         // As before, we create this player in expectation that players will not be released until the end of the program
         // So, we don't worry about pointer shenanigans
         // I'll take full reponsibility should this bite me in the butt later.
-        Player *player = new Player(move(symbol), name);
-        players[i] = player;
+        auto newPlayer = new Player(symbol, name);
+        players[i] = newPlayer;
     }
     return players;
 }
@@ -76,8 +98,8 @@ Board GameSetup::interactiveBoardSetup()
 
 Game GameSetup::quickGameSetup()
 {
-    auto symbolOne = make_unique<ColoredSymbol>('O', 1);
-    auto symbolTwo = make_unique<ColoredSymbol>('X', 7);
+    auto symbolOne = new ColoredSymbol('O', 1);
+    auto symbolTwo = new ColoredSymbol('X', 7);
 
     // If you're a grader and you're reading this...
     // first of all, hello!  And second of all,
@@ -85,8 +107,8 @@ Game GameSetup::quickGameSetup()
     // I noted it, and in the words of Nick Fury,
     // "elected to ignore it"
     // These player objects will be kindly implicitly deallocated upon program completion.
-    Player *playerOne = new Player(move(symbolOne), "Guest 1");
-    Player *playerTwo = new Player(move(symbolTwo), "Guest 2");
+    Player *playerOne = new Player(symbolOne, "Guest 1");
+    Player *playerTwo = new Player(symbolTwo, "Guest 2");
     Player **players = new Player *[2]
     { playerOne, playerTwo };
     return Game(Board(4, 7, 6), players, 2, true);
@@ -95,7 +117,7 @@ Game GameSetup::quickGameSetup()
 /**
  * @return Game
  */
-Game GameSetup::interactiveSetup(SaveData data)
+Game GameSetup::interactiveSetup(SaveManager saveManager)
 {
     cout << "To start, please enter a few details to set up a game, or choose Quick Play." << endl;
     int numPlayers = 0;
@@ -119,10 +141,9 @@ Game GameSetup::interactiveSetup(SaveData data)
         }
     }
 
-    Player **players = interactivePlayersSetup(data.players, numPlayers);
-    // cin.get(); // Throw away a spurious newline. It's pretty odd.
+    Player **players = interactivePlayersSetup(saveManager, numPlayers);
+    cin.get(); // Throw away a spurious newline. It's pretty odd.
     Board board = interactiveBoardSetup();
-    // cin.get(); // Throw away another spurious newline. It remains pretty odd.
 
     return Game(board, players, numPlayers);
 }
